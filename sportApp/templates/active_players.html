@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title%} Active players {{division_name}} {% endblock %}
+{% block scripts %}
+$( document ).ready(function() {
+       $('#id_name').change(
+        function(){
+            $('#division_select').submit();
+        });
+    });
+{% endblock %}
+{% block body%}
+{% include "navbar.html" with active="active_players" %}
+
+<form action="{% url active_players %}?" method="get" id="division_select">
+    {{division_select.name}}
+</form>
+
+{% if Players%}
+<h2>Active players:</h2>
+<div style="margin-right:25%">
+<table class="table table-striped table-condensed">
+<tr><th class="col-md-7">Name</th>
+    <th class="col-md-2">Division</th>
+    <th class="col-md-2">Team</th>
+    <th class="col-md-1"></th></tr>
+{% for p in Players%}
+    <tr>
+        <td><a href="{% url show_player_data p.id %}">{{p.name}}</a></td>
+        <td>{{p.current_division}}</td>
+        <td>{{p.team}}</td>
+        <td><a title="Press here to make this the default player." href="{%url make_player_default p.id%}" class="btn-primary btn" role="button">Make default</a></td>
+    </tr>
+{% endfor %}
+</table>
+</div>
+{% else %}
+<div class="bs-callout bs-callout-info" style="width:75%">
+    <h4>No player active in current division.</h4>
+    <p>There are no players in {{division_name}}</p>
+</div>
+{% endif %}
+
+{% endblock %}

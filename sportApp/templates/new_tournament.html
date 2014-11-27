@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title%} Create new tournament {% endblock %}
+{% block body%}
+{% include "navbar.html" with active="new_tournament" %}
+
+{%if new_tournament.errors %}
+    <h4>Form validation failed:</h4>
+        <strong>{{new_tournament.errors}}</strong>
+{% endif %}
+
+<form class="form-horizontal" action="{% url new_tournament %}" role="form" method="post">
+  {% csrf_token %}
+<div class="form-group">
+      <label for="name" class="col-sm-1 control-label">Name</label>
+{{new_tournament.name}}
+</div>
+<div class="form-group">
+      <label for="start_date" class="col-sm-1 control-label">Start date</label>
+ {{new_tournament.start_date}}
+</div>
+<div class="form-group">
+      <label for="end_date" class="col-sm-1 control-label">End date</label>
+ {{new_tournament.end_date}}
+</div>
+<div class="form-group">
+  <label for="end_date" class="col-sm-1 control-label"></label>
+<button type="submit" value="Send" class="btn-primary btn">Register new tournament and generate games</button>
+</div>
+
+</form>
+{% endblock %}

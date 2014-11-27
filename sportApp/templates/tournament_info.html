@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title%} Tournament information {% endblock %}
+{% block scripts %}
+$( document ).ready(function() {
+       $('#id_name').change(
+        function(){
+            $('#division_select').submit();
+        });
+    });
+{% endblock %}
+{% block body%}
+
+{% include "navbar.html" with active="" %}
+
+{% load custom_tags %}
+
+<form action="{% url show_tournament_data tournament_id division_id %}" method="post" id="division_select">{% csrf_token %}
+Select division: {{division_select.name}}
+</form>
+
+
+
+{% if table%}
+<h2>Data for "{{tournament_data.name}}" - {{division.name}}</h2>
+
+<div class="container-fluid">
+<div class="row">
+    <div class="col-md-4">
+        <h2>Current standings:</h2>
+        <table class="table table-striped table-condensed">
+        <tr><th class="col-md-4">Name</th>
+            <th title="Games Played" class="col-md-1">P</th>
+            <th title="Games Won" class="col-md-1">W</th>
+            <th title="Games Drawn" class="col-md-1">D</th>
+            <th title="Games Lost" class="col-md-1">L</th>
+            <th title="Goals for" class="col-md-1">GF</th>
+            <th title="Goals against" class="col-md-1">GA</th>
+            <th title="Goal Difference" class="col-md-1">GD</th>
+            <th title="Points" class="col-md-1">PTS</th></tr>
+        {% for row in table.standings%}
+        <tr><td><a href="{% url show_player_data row.id %}">{{row.name}}</a></td>
+            <td>{{row.games_played}}</td>
+            <td>{{row.games_won}}</td>
+            <td>{{row.games_draw}}</td>
+            <td>{{row.games_lost}}</td>
+            <td>{{row.goals}}</td>
+            <td>{{row.goals_against}}</td>
+            <td>{{row.goals|substract:row.goals_against}}</td>
+            <td>{{row.points}}</td>
+        </tr>
+        {% endfor%}
+        </table>
+        {% include "table_legend.html" %}
+    </div>
+    <div class="col-md-4">
+        <h2>Unplayed Games:</h2>
+
+        {% regroup tournament_data.unplayed_games by date as game_list %}
+
+        {% for games in game_list %}
+            <ul>
+            <strong>{{games.grouper|date:"Y-m-d"}}</strong>
+            <ul>
+            {% for match in games.list %}
+                <li> <a href="{% url edit_match_data match.id tournament_id division.id%}">{{match.home_player.name}} - {{match.away_player.name}}</a>
+                          {% if user.is_authenticated %}<a href="{% url home %}admin/sportApp/game/{{match.id}}"> - Admin</a>{% endif %}
+
+                </li>
+            {% endfor %}
+            </ul>
+            </ul>
+        {% endfor %}
+    </div>
+    <div class="col-md-4">
+        <h2>Played Games</h2>
+        {% regroup tournament_data.played_games by date as game_list %}
+        {% for games in game_list reversed%}
+            <ul>
+            <strong>{{games.grouper|date:"Y-m-d"}}</strong>
+            <ul>
+            {% for match in games.list %}
+                <li>{{match.home_player.name}} - {{match.away_player.name}} : {{match.final_standing}}
+                {% if user.is_authenticated %}
+                    <a href="{% url home %}admin/sportApp/game/{{match.id}}"> - Admin</a>{% endif%}
+                </li>
+            {% endfor %}
+            </ul>
+            </ul>
+        {% endfor %}
+    </div>
+</div>
+</div>
+</div>
+{% endif%}
+
+{% if all_tables%}
+<h2>Data for "{{current_tournament.name}}" - All divisions</h2>
+
+    {% for division, table in all_tables%}
+        <h2><a href="{% url show_tournament_data current_tournament.id division.id%}">{{division.name}}</a></h2>
+        <table class="table table-striped table-condensed">
+        <tr><th class="col-md-4">Name</th>
+            <th title="Games Played" class="col-md-1">P</th>
+            <th title="Games Won" class="col-md-1">W</th>
+            <th title="Games Drawn" class="col-md-1">D</th>
+            <th title="Games Lost" class="col-md-1">L</th>
+            <th title="Goals for" class="col-md-1">GF</th>
+            <th title="Goals against" class="col-md-1">GA</th>
+            <th title="Goal Difference" class="col-md-1">GD</th>
+            <th title="Points" class="col-md-1">PTS</th></tr>
+        {% for row in table%}
+        <tr><td><a href="{% url show_player_data row.id %}">{{row.name}}</a></td>
+            <td>{{row.games_played}}</td>
+            <td>{{row.games_won}}</td>
+            <td>{{row.games_draw}}</td>
+            <td>{{row.games_lost}}</td>
+            <td>{{row.goals}}</td>
+            <td>{{row.goals_against}}</td>
+            <td>{{row.goals|substract:row.goals_against}}</td>
+            <td>{{row.points}}</td>
+        </tr>
+        {% endfor%}
+        </table>
+        </div>
+    {% endfor %}
+        {% include "table_legend.html" %}
+{% endif%}
+
+
+{% endblock %}

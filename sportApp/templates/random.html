@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title%} Randomize players {% endblock %}
+{% block body%}
+{% include "navbar.html" with active="randomize" %}
+
+<h2>Randomize players</h2>
+
+Randomize the division contents for each division rank.<br>
+
+<a button="button" href="{% url randomize_players %}?random=1" class="btn-primary btn">Start shuffle the divisions</a>
+
+<strong>{{status_msg}}</strong>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>{% block title%} Title {% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{% get_includes_path %}bootstrap.css">
+<script src="{% get_includes_path %}jquery-2.1.1.min.js"></script>
+<script src="{% get_includes_path %}bootstrap.min.js"></script>
+{% block includes %}
+{% endblock %}
+
+<script>
+{% block scripts%}{% endblock %}
+</script>
+</head>
+<body style="padding-top:60px; margin-left:50px; margin-right:50px;">
+{% block body %}
+{% endblock %}
+
+
+<p style="text-align:right">{% get_admin %}</p>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title%} Home {% endblock %}
+{% block includes %}
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<style>
+path.color0 {
+  fill: #1072b8;
+}
+
+path.color1 {
+  fill: #35526b;
+}
+
+text, #progress {
+  font-family: "RamaGothicM-Heavy",Impact,Haettenschweiler,"Franklin Gothic Bold",Charcoal,"Helvetica Inserat","Bitstream Vera Sans Bold","Arial Black",sans-serif;
+  font-size: 7rem;
+  font-weight: 400;
+  line-height: 16rem;
+  fill: #1072b8;
+}
+
+#donut {
+  width: 29rem;
+  height: 29rem;
+  margin: 0 auto;
+}
+</style>
+<script>
+$(document).ready(function() {
+
+var duration   = 500,
+transition = 200;
+
+drawDonutChart(
+  '#donut',
+  $('#donut').data('donut'),
+  290,
+  290,
+  ".35em"
+);
+
+function drawDonutChart(element, percent, width, height, text_y) {
+  width = typeof width !== 'undefined' ? width : 290;
+  height = typeof height !== 'undefined' ? height : 290;
+  text_y = typeof text_y !== 'undefined' ? text_y : "-.10em";
+
+  var dataset = {
+        lower: calcPercent(0),
+        upper: calcPercent(percent)
+      },
+      radius = Math.min(width, height) / 2,
+      pie = d3.layout.pie().sort(null),
+      format = d3.format(".0%");
+
+  var arc = d3.svg.arc()
+        .innerRadius(radius - 20)
+        .outerRadius(radius);
+
+  var svg = d3.select(element).append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+  var path = svg.selectAll("path")
+        .data(pie(dataset.lower))
+        .enter().append("path")
+        .attr("class", function(d, i) { return "color" + i })
+        .attr("d", arc)
+        .each(function(d) { this._current = d; }); // store the initial values
+
+  var text = svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr("dy", text_y);
+
+  if (typeof(percent) === "string") {
+    text.text(percent);
+  }
+  else {
+    var progress = 0;
+    var timeout = setTimeout(function () {
+      clearTimeout(timeout);
+      path = path.data(pie(dataset.upper)); // update the data
+      path.transition().duration(duration).attrTween("d", function (a) {
+        // Store the displayed angles in _current.
+        // Then, interpolate from _current to the new angles.
+        // During the transition, _current is updated in-place by d3.interpolate.
+        var i  = d3.interpolate(this._current, a);
+        var i2 = d3.interpolate(progress, percent)
+        this._current = i(0);
+        return function(t) {
+          text.text( format(i2(t) / 100) );
+          return arc(i(t));
+        };
+      }); // redraw the arcs
+    }, 200);
+  }
+};
+
+function calcPercent(percent) {
+  return [percent, 100-percent];
+};
+});
+
+</script>
+{% endblock %}
+{% block scripts %}
+{% endblock %}
+
+{% block body%}
+{% include "navbar.html" with active="home" %}
+
+<div class="container-fluid">
+<div class="row">
+            {% if tournament_data%}
+            <div class="col-md-4">
+            <h2>Active tournaments:</h2>
+            {%for tournament, progress in tournament_data %}
+                <h4>{{tournament.name}}</h4>
+                <ul>
+                {% for division in divisions %}
+                    <li><a href="{% url show_tournament_data tournament.id division.id %}">{{division.name}}</a></li>
+                {% endfor %}
+                </ul>
+                <center id="progress"><h2>Tournament progress</h2></center>
+                <div id="donut" data-donut="{{progress}}">
+                </div>
+                </div>
+                {% endfor %}
+
+
+    <div class="col-md-4">
+    {% if todays_games%}
+    <h2>Todays games:</h2>
+        {% regroup todays_games by division as games_list %}
+        {% for games in games_list %}
+            <strong>{{games.grouper}}</strong>
+            <ul>
+            {% for match in games.list %}
+                <li><a href="{% url edit_match_data match.id 0 0 %}"> {{match.home_player.name}} - {{match.away_player.name}}</a> {{match.date|date:"Y-m-d"}}</li>
+            {% endfor %}
+            </ul>
+            </ul>
+        {% endfor %}
+    {% endif %}
+    </div>
+        <div class="col-md-4">
+        {% if latest_played_games%}
+            <h2>Latest results:</h2>
+            <ul>
+            {% for game in latest_played_games %}
+                <li>{{game.home_player.name}} - {{game.away_player.name}} : {{game.final_standing}}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        </div>
+</div>
+</div>
+
+{% else %}
+<div class="bs-callout bs-callout-info" style="width:75%">
+    <h4>There are currently no active tournaments </h4>
+    <p>Check back later!</p>
+</div>{% endif %}
+{% endblock %}

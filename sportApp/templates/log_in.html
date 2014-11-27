@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title%} Rankings {% endblock %}
+{% block body%}
+{% include "navbar.html" with active="rankings" %}
+
+{% if error_message != None%}
+<div class="bs-callout bs-callout-info" style="width:75%">
+    <h4>{{error_message}}</h4>
+    <p>Try again!</p>
+</div>
+{% else%}
+<div class="bs-callout bs-callout-info" style="width:50%">
+    <h4>Log in </h4>
+    <p>This is only necessary for administrators.</p>
+</div>
+{% endif %}
+<form action="{% url log_in %}" role="form" method="post" style="margin-right:50%">
+      {% csrf_token %}
+      <div class="form-group">
+      <label for="username" class="col-sm-2 control-label">User name:</label>
+                <input type="text" class="form-control" name="{{log_in_form.username.html_name}}" id="{{log_in_form.username.auto_id }}" placeholder="User name">
+      </div>
+      <label for="password" class="col-sm-2 control-label">Password:</label>
+                <input type="password" class="form-control" name="{{log_in_form.password.html_name}}" id="{{log_in_form.password.auto_id }}" placeholder="Password">
+      </div>
+
+</div>
+<br>
+<button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+
+{% endblock %}

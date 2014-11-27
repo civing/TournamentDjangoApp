@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title%} Player Data {% endblock %}
+{% block body%}
+{% if default %}
+{% include "navbar.html" with active="show_default_player" %}
+{% else %}
+{% include "navbar.html" with active="" %}
+{% endif %}
+
+{% load custom_tags %}
+
+<h2>Player data for {{player_data.name}}:</h2>
+
+<table class="table table-striped table-condensed">
+<tr><th>Name</th><th>Division</th><th>Team</th><th>Played Games</th>
+    <th>Games to Play</th>
+    <th>Won</th>
+    <th>Draw</th>
+    <th>Lost</th>
+    <th>Goals For</th>
+    <th>Goals Against</th>
+    <th>Goal Difference</th>
+    </tr>
+    <tr>
+        <td>{{player_data.name}}</td>
+        <td>{{player_data.current_division}}</td>
+        <td>{{player_data.team}}</td>
+        <td>{{player_stats.games_played}}</td>
+        <td>{{player_stats.games_to_play}}</td>
+        <td>{{player_stats.games_won}}</td>
+        <td>{{player_stats.games_draw}}</td>
+        <td>{{player_stats.games_lost}}</td>
+        <td>{{player_stats.goals_made}}</td>
+        <td>{{player_stats.goals_against}}</td>
+        <td>{{player_stats.goals_made|substract:player_stats.goals_against}}</td>
+    </tr>
+</table>
+
+{%if current_tournaments%}
+<h3>Current tournaments</h3>
+{% for tournament in current_tournaments %}
+<a href="{% url show_tournament_data tournament.id player_data.current_division.id%}">{{tournament}} - {{player_data.current_division}}</a><br>
+{% endfor%}
+{% endif %}
+
+<div class="container-fluid">
+<div class="row">
+    <div class="col-md-6">
+
+    {% if unplayed_games%}
+    <h2>Upcoming games:</h2>
+    {% include "unplayed_games_list.html" with game_list=unplayed_games %}
+    {% else %}
+    <div class="bs-callout bs-callout-info" style="width:75%">
+        <h4>Player have no upcoming games currently!</h4>
+        <p>Check back later!</p>
+    </div>
+    {% endif %}
+    </div>
+    <div class="col-md-6">
+        <h2>Played games:</h2>
+        {% if played_games %}
+            <ul>
+            {% for game in played_games%}
+                <li>{{game.home_player.name}} - {{game.away_player.name}} : {{game.final_standing}}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+        <div class="bs-callout bs-callout-info" style="width:75%">
+            <h4>Player have not played any games yet!</h4>
+            <p>Check back later!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+
+{% endblock %}

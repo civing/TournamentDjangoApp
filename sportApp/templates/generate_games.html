@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title%} Generate games {% endblock %}
+{% block body%}
+{% include "navbar.html" with active="" %}
+
+<h2>Generated games for "{{current_tournament.name}}"</h2>
+
+{% for div, games in games_per_division%}
+<h2>{{div}}</h2>
+<table class="table table-striped table-condensed">
+    <tr>
+        <th>Home player</th>
+        <th>Away player</th>
+        <th>Date</th>
+    </tr>
+{%for g in games %}
+    <tr>
+        <td>{{g.home_player.name}}</td>
+        <td>{{g.away_player.name}}</td>
+        <td>{{g.date|date:"Y-m-d"}}</td>
+    </tr>
+{% endfor%}
+</table>
+{% endfor%}
+{% endblock %}

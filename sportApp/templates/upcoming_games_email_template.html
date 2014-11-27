@@ -1,0 +1,18 @@
+<h2>Todays's games for {{player.name}}</h2>
+
+<p>Please try to play your game as soon as possible and report the result in the web application. Good luck and may the best player win!</p>
+
+{% regroup unplayed_games by date as games_unplayed %}
+{% for games in games_unplayed %}
+    <ul>
+    <strong>{{games.grouper|date:"Y-m-d"}}</strong>
+    <ul>
+    {% for match in games.list %}
+        <li><a href="{{app_url}}{% url edit_match_data match.id 0 0 %}"> {{match.home_player.name}} - {{match.away_player.name}}</a></li>
+    {% endfor %}
+    </ul>
+    </ul>
+{% endfor %}
+
+Best Regards<br>
+<a href="{{app_url}}">The Table Hockey Application</a>

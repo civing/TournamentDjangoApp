@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title%} Upload player {% endblock %}
+{% block body%}
+{% include "navbar.html" with active="upload_player_list" %}
+
+<h2>Upload a list of players.</h2>
+
+{{DivisionSelectForm.errors}}
+
+<form class="form-horizontal" action="{% url upload_player_list %}" role="form" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<div class="form-group">
+
+{{DivisionSelectForm.league}}
+
+<h3>Select text file containing a list of players to add.</h3>
+{{DivisionSelectForm.textfile}}
+    <br>
+<button type="submit" value="Send" class="btn-primary btn">Upload file</button>
+</div>
+</form>
+<br>
+<strong>{{status_msg}}</strong>
+
+{% endblock %}

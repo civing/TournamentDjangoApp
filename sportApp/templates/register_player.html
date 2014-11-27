@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title%} Edit Match {% endblock %}
+{% block body%}
+{% include "navbar.html" with active="register_player" %}
+<h3>Register a new player.</h3>
+
+<form class="form-horizontal" action="{% url register_player %}" role="form" method="post">
+  {% csrf_token %}
+   {%if RegisterPlayerForm.errors %}
+        <h4>Form validation failed:</h4>
+            <strong>{{RegisterPlayerForm.errors}}</strong>
+   {% endif %}
+<div class="form-group">
+      <div class="form-group">
+      <label for="away_score" class="col-sm-2 control-label">Name</label>
+               {{RegisterPlayerForm.name}}
+      </div>
+      <div class="form-group">
+               <label for="home_score" class="col-sm-2 control-label">Email (optional)</label>
+                {{RegisterPlayerForm.email}}
+      </div>
+      <div class="form-group">
+               <label for="home_score" class="col-sm-2 control-label">Division</label>
+                {{RegisterPlayerForm.current_division}}
+      </div>
+      <div class="form-group">
+               <label for="team" class="col-sm-2 control-label">Team:</label>
+                {{RegisterPlayerForm.team}}
+      <div class="form-group">
+      <div class="col-sm-2">
+      <br>
+      <button type="submit" value="Send" class="btn-primary btn">Register new player</button></div></div>
+</div>
+</form>
+
+{% endblock %}
