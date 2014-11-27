@@ -102,6 +102,7 @@ class Game(models.Model):
     wo_home = models.BooleanField(default=False, help_text="Set this to True if home player is WO. Both players can be WO and then both will have a -5 score.")
     wo_away = models.BooleanField(default=False, help_text="Set this to True if home player is WO")
     date = models.DateField(default=datetime.datetime.now(), blank=True)
+    game_description = models.CharField(max_length=30, blank=True, null=True, default="")
     objects = GameManager()
 
     def is_game_a_draw(self):
