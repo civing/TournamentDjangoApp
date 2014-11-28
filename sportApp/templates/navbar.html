@@ -56,42 +56,38 @@
 
           {% if user.is_authenticated %}
               <ul class="nav navbar-nav navbar-left">
-              <li><a><strong>Admin tasks --></strong></a></li>
-              </ul>
+                  <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Admin <span class="caret"></span></a>
+                      <ul class="dropdown-menu" role="menu">
+                          {% if "register" in active %}
+                          <li class="active">
+                          {% else%}
+                          <li>
+                          {% endif %}
+                          <a href="{% url register_player %}">Register</a></li>
 
-              <ul class="nav navbar-nav navbar-left">
-              {% if "register" in active %}
-              <li class="active">
-              {% else%}
-              <li>
-              {% endif %}
-              <a href="{% url register_player %}">Register</a></li>
-              </ul>
+                          {% if "new_tournament" in active %}
+                          <li class="active">
+                          {% else%}
+                          <li>
+                          {% endif %}
+                          <a href="{% url new_tournament %}">New Tournament</a></li>
 
-              <ul class="nav navbar-nav navbar-left">
-              {% if "new_tournament" in active %}
-              <li class="active">
-              {% else%}
-              <li>
-              {% endif %}
-              <a href="{% url new_tournament %}">New Tournament</a></li>
-              </ul>
+                          {% if "upload_player_list" in active %}
+                          <li class="active">
+                          {% else%}
+                          <li>
+                          {% endif %}
+                          <a href="{% url upload_player_list %}">Upload players</a></li>
 
-              <ul class="nav navbar-nav navbar-left">
-              {% if "upload_player_list" in active %}
-              <li class="active">
-              {% else%}
-              <li>
-              {% endif %}
-              <a href="{% url upload_player_list %}">Upload players</a></li>
-              </ul>
-              <ul class="nav navbar-nav navbar-left">
-              {% if "randomize" in active %}
-              <li class="active">
-              {% else%}
-              <li>
-              {% endif %}
-              <a href="{% url randomize_players %}">Randomize players</a></li>
+                          {% if "randomize" in active %}
+                          <li class="active">
+                          {% else%}
+                          <li>
+                          {% endif %}
+                          <a href="{% url randomize_players %}">Randomize players</a></li>
+                      </ul>
+                  </li>
               </ul>
           {% endif %}
         <ul class="nav navbar-nav navbar-right">
